@@ -15,6 +15,12 @@ public class CenterStageDrivetrain {
         backLeftMotor = hwMap.get(DcMotor.class, "LBDrive");
         backRightMotor = hwMap.get(DcMotor.class, "RBDrive");
 
+        //stop Encoders RR
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         //mecanum drive
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -53,6 +59,11 @@ public class CenterStageDrivetrain {
         double backRightPower = ((fw + r) - turn) * multiplier;
         setPowers(frontLeftPower, frontRightPower,
                 backLeftPower, backRightPower);
+    }
+
+    public void stopMotors() {
+        // Stop motors when the op mode is stopped
+        setPowers(0, 0, 0, 0);
     }
 
     /* BELOW THIS LINE IS AUTO CODE, DO NOT USE IN COMP (UNLESS WORKING) */

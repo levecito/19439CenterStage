@@ -1,32 +1,34 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.referenceAS.CenterStageDrivetrain;
 import org.firstinspires.ftc.teamcode.referenceAS.CenterStageScoring;
-
-@Disabled
-public class CenterStageLM1 extends OpMode {
-    //the only opps I have are the TeleOpps
-    boolean aAlreadyPressed;
-    boolean bAlreadyPressed;
-    boolean yAlreadyPressed;
-    boolean intakeOn;
-    boolean reverseIntake;
-    int transferState;
-    CenterStageDrivetrain drivetrain = new CenterStageDrivetrain();
-    CenterStageScoring scoring = new CenterStageScoring();
+@TeleOp(name = "LM2 TeleOp")
+public class CenterStageLM2 extends OpMode {
+        boolean aAlreadyPressed;
+        boolean bAlreadyPressed;
+        boolean yAlreadyPressed;
+        boolean intakeOn;
+        boolean reverseIntake;
+        int transferState;
+        boolean inEndGame;
+        double endGameTime;
+        CenterStageDrivetrain drivetrain = new CenterStageDrivetrain();
+        CenterStageScoring scoring = new CenterStageScoring();
     @Override
     public void init() {
         drivetrain.init(hardwareMap);
         scoring.init(hardwareMap);
+        inEndGame = false;
     }
 
     @Override
     public void start() {
         scoring.pivotServos(0.0);
         scoring.transferServos(0.0, 0.0);
+        endGameTime = getRuntime() + 90;
     }
 
     @Override
@@ -108,6 +110,20 @@ public class CenterStageLM1 extends OpMode {
             scoring.pivotServos(0.6);
         } else if (gamepad2.left_bumper) {
             scoring.pivotServos(0.01);
+        }
+
+        //endgame rumble, allows for lead screw and drone (no trigger fingers!)
+        if ((getRuntime() > endGameTime) && !inEndGame) {
+            gamepad1.rumbleBlips(3);
+            gamepad2.rumbleBlips(3);
+            inEndGame = true;
+        }
+
+        if (inEndGame) {
+            boolean climbUp = gamepad1.left_bumper;
+            boolean drone = gamepad2.x;
+            //lead screw and drone hotkeys here for no trigger fingers
+            //gamepad1 gets lead screw, gamepad 2 gets drone
         }
     }
 }
