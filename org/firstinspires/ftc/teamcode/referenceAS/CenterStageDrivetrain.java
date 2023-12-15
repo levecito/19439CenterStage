@@ -30,6 +30,13 @@ public class CenterStageDrivetrain {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        /*
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        */
     }
 
     private void setPowers(double frontLeftPower, double frontRightPower,
@@ -61,147 +68,26 @@ public class CenterStageDrivetrain {
                 backLeftPower, backRightPower);
     }
 
-    public void stopMotors() {
-        // Stop motors when the op mode is stopped
-        setPowers(0, 0, 0, 0);
-    }
+    public void polarDrive(double theta, double power, double turn, double mult) {
+        double sin = Math.sin(theta - Math.PI/4);
+        double cos = Math.cos(theta - Math.PI/4);
+        double max = Math.max(Math.abs(sin), Math.abs(cos));
 
-    /* BELOW THIS LINE IS AUTO CODE, DO NOT USE IN COMP (UNLESS WORKING) */
-    public void autoInit(HardwareMap hwMap) {
-        frontLeftMotor = hwMap.get(DcMotor.class, "LFDrive");
-        frontRightMotor = hwMap.get(DcMotor.class, "RFDrive");
-        backLeftMotor = hwMap.get(DcMotor.class, "LBDrive");
-        backRightMotor = hwMap.get(DcMotor.class, "RBDrive");
+        double frontLeftPower = (power * cos/max + turn) * mult;
+        double frontRightPower = (power * sin/max - turn) * mult;
+        double backLeftPower = (power * sin/max + turn) * mult;
+        double backRightPower = (power * cos/max - turn) * mult;
 
-        //mecanum drive
-        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        // Initialize encoders if applicable
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Set motor run modes
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void moveForwardInches(double inchesToMove, double motorPower) {
-        // Calculate target encoder ticks
-        double wheelDiameterInMM = 96.0; // in millimeters
-        double wheelCircumferenceInMM = Math.PI * wheelDiameterInMM;
-        double wheelCircumferenceInInches = wheelCircumferenceInMM / 25.4;
-        double encoderTicksPerInch = 537.7 / wheelCircumferenceInInches;
-        int targetEncoderTicks = (int) (inchesToMove * encoderTicksPerInch);
-
-        // Set the target position for all motors
-        frontLeftMotor.setTargetPosition(targetEncoderTicks);
-        frontRightMotor.setTargetPosition(targetEncoderTicks);
-        backLeftMotor.setTargetPosition(targetEncoderTicks);
-        backRightMotor.setTargetPosition(targetEncoderTicks);
-
-        // Set the motor run mode to RUN_TO_POSITION
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Set the motor power to move forward
-        setPowers(motorPower, motorPower, motorPower, motorPower);
-
-        // Monitor the encoder values and wait for all motors to reach the target position
-        while (frontLeftMotor.isBusy() || frontRightMotor.isBusy() || backLeftMotor.isBusy() || backRightMotor.isBusy()) {
-            // Continue to monitor
+        if ((power + Math.abs(turn)) > 1) {
+            frontLeftPower /= power + turn;
+            frontRightPower /= power + turn;
+            backLeftPower /= power + turn;
+            backRightPower /= power + turn;
         }
 
-        // Stop the motors after reaching the target position
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-    }
-
-    public void turnDegrees(double degreesToTurn, double motorPower) {
-        // Calculate target encoder ticks for a 90-degree turn
-        double wheelTrackWidthInInches = 12.0; // Adjust for your robot's width
-        double encoderTicksPerDegree = 537.7 * wheelTrackWidthInInches / (360.0 * Math.PI);
-        int targetEncoderTicks = (int) (degreesToTurn * encoderTicksPerDegree);
-
-        // Set the target position for left and right motors to make the robot turn
-        frontLeftMotor.setTargetPosition(targetEncoderTicks);
-        backLeftMotor.setTargetPosition(targetEncoderTicks);
-        frontRightMotor.setTargetPosition(-targetEncoderTicks);
-        backRightMotor.setTargetPosition(-targetEncoderTicks);
-
-        // Set the motor run mode to RUN_TO_POSITION
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Set the motor power to turn
-        frontLeftMotor.setPower(motorPower);
-        backLeftMotor.setPower(motorPower);
-        frontRightMotor.setPower(motorPower);
-        backRightMotor.setPower(motorPower);
-
-        // Monitor the encoder values and wait for all motors to reach the target position
-        while (frontLeftMotor.isBusy() || backLeftMotor.isBusy() || frontRightMotor.isBusy() || backRightMotor.isBusy()) {
-            // Continue to monitor
-        }
-
-        // Stop the motors after completing the turn
-        frontLeftMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backRightMotor.setPower(0);
-    }
-    public void strafeInDirection(double angleInDegrees, double inchesToMove, double motorPower) {
-        //0 is right, 180 is left (According to ChatGPT)
-        double angleInRadians = Math.toRadians(angleInDegrees);
-        double x = Math.cos(angleInRadians);
-        double y = Math.sin(angleInRadians);
-
-        // Calculate target encoder ticks for strafing
-        double wheelDiameterInMM = 96.0; // in millimeters
-        double wheelCircumferenceInMM = Math.PI * wheelDiameterInMM;
-        double wheelCircumferenceInInches = wheelCircumferenceInMM / 25.4;
-        double encoderTicksPerInch = 537.7 / wheelCircumferenceInInches;
-        int targetEncoderTicks = (int) (inchesToMove * encoderTicksPerInch);
-
-        // Calculate target positions for each motor
-        int frontLeftTarget = (int) (targetEncoderTicks * (x + y));
-        int frontRightTarget = (int) (targetEncoderTicks * (x - y));
-        int backLeftTarget = (int) (targetEncoderTicks * (x - y));
-        int backRightTarget = (int) (targetEncoderTicks * (x + y));
-
-        // Set the target positions for all motors
-        frontLeftMotor.setTargetPosition(frontLeftTarget);
-        frontRightMotor.setTargetPosition(frontRightTarget);
-        backLeftMotor.setTargetPosition(backLeftTarget);
-        backRightMotor.setTargetPosition(backRightTarget);
-
-        // Set the motor run mode to RUN_TO_POSITION
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Set the motor powers for strafing
-        setPowers(motorPower, motorPower, motorPower, motorPower);
-
-        // Monitor the encoder values and wait for all motors to reach the target position
-        while (frontLeftMotor.isBusy() || frontRightMotor.isBusy() || backLeftMotor.isBusy() || backRightMotor.isBusy()) {
-            // Continue to monitor
-        }
-
-        // Stop the motors after completing the strafe
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
+        frontLeftMotor.setPower(frontLeftPower);
+        frontRightMotor.setPower(frontRightPower);
+        backLeftMotor.setPower(backLeftPower);
+        backRightMotor.setPower(backRightPower);
     }
 }

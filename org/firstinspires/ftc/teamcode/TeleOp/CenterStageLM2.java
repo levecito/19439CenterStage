@@ -15,6 +15,7 @@ public class CenterStageLM2 extends OpMode {
         int transferState;
         boolean inEndGame;
         double endGameTime;
+
         CenterStageDrivetrain drivetrain = new CenterStageDrivetrain();
         CenterStageScoring scoring = new CenterStageScoring();
     @Override
@@ -26,8 +27,9 @@ public class CenterStageLM2 extends OpMode {
 
     @Override
     public void start() {
-        scoring.pivotServos(0.0);
-        scoring.transferServos(0.0, 0.0);
+        scoring.pivotServo(0.02);
+        scoring.transferServo(1.0);
+        scoring.droneLaunch(0.0);
         endGameTime = getRuntime() + 90;
     }
 
@@ -91,39 +93,32 @@ public class CenterStageLM2 extends OpMode {
         }
         yAlreadyPressed = gamepad2.y;
 
-        switch (transferState % 3) {
+        switch (transferState % 2) {
             case 0:
-                //front open
-                scoring.transferServos(1.0, 0.0);
+                scoring.transferServo(1.0);
                 break;
             case 1:
-                //both closed
-                scoring.transferServos(1.0, 1.0);
-                break;
-            case 2:
-                //back open
-                scoring.transferServos(0.0, 1.0);
+                scoring.transferServo(0.3);
                 break;
         }
+        telemetry.addData("Y state", transferState % 2);
+
         //pivot servos
         if (gamepad2.right_bumper) {
-            scoring.pivotServos(0.6);
+            scoring.pivotServo(0.3);
         } else if (gamepad2.left_bumper) {
-            scoring.pivotServos(0.01);
+            scoring.pivotServo(0.02);
         }
 
-        //endgame rumble, allows for lead screw and drone (no trigger fingers!)
         if ((getRuntime() > endGameTime) && !inEndGame) {
             gamepad1.rumbleBlips(3);
             gamepad2.rumbleBlips(3);
             inEndGame = true;
         }
 
-        if (inEndGame) {
-            boolean climbUp = gamepad1.left_bumper;
-            boolean drone = gamepad2.x;
-            //lead screw and drone hotkeys here for no trigger fingers
-            //gamepad1 gets lead screw, gamepad 2 gets drone
+        boolean drone = gamepad1.x;
+        if (drone) {
+            scoring.droneLaunch(0.2);
         }
     }
 }

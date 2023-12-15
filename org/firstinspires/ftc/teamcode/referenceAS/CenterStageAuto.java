@@ -1,18 +1,19 @@
 package org.firstinspires.ftc.teamcode.referenceAS;
 
-import static java.lang.Thread.sleep;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class CenterStageAuto {
     private DcMotor frontLeftMotor;
     private DcMotor frontRightMotor;
     private DcMotor backLeftMotor;
     private DcMotor backRightMotor;
+    public ElapsedTime auto_timer = new ElapsedTime();
 
     public void autoInit(HardwareMap hwMap) {
         //call Motor names
+        auto_timer.reset();
         frontLeftMotor = hwMap.get(DcMotor.class, "LFDrive");
         frontRightMotor = hwMap.get(DcMotor.class, "RFDrive");
         backLeftMotor = hwMap.get(DcMotor.class, "LBDrive");
@@ -27,6 +28,11 @@ public class CenterStageAuto {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     private void autoSetPowers(double frontLeftPower, double frontRightPower,
@@ -55,11 +61,9 @@ public class CenterStageAuto {
         double backRightPower = drive + strafe - rotate;
 
         autoSetPowers(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-
-        try {
-            sleep(duration);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        double ini_time = auto_timer.milliseconds();
+        while ((auto_timer.milliseconds()-ini_time) < duration) {
+            if (Thread.interrupted()) break;
         }
     }
 
