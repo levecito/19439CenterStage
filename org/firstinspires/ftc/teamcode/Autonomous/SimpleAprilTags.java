@@ -40,7 +40,7 @@ public class SimpleAprilTags extends OpMode {
     @Override
     public void start() {
         visionPortal.stopStreaming();
-        telemetry.addData("April Tags", "idsFound");
+        telemetry.addData("April Tags", "None");
     }
 
     @Override

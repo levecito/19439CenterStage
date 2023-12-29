@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.referenceAS;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 public class CenterStageDrivetrain {
     private DcMotor frontLeftMotor;
@@ -10,10 +11,10 @@ public class CenterStageDrivetrain {
 
     public void init(HardwareMap hwMap) {
         //call Motor names
-        frontLeftMotor = hwMap.get(DcMotor.class, "LFDrive");
-        frontRightMotor = hwMap.get(DcMotor.class, "RFDrive");
-        backLeftMotor = hwMap.get(DcMotor.class, "LBDrive");
-        backRightMotor = hwMap.get(DcMotor.class, "RBDrive");
+        frontLeftMotor = hwMap.get(DcMotor.class, "LFDrive"); //motor 0
+        frontRightMotor = hwMap.get(DcMotor.class, "RFDrive"); //motor 1
+        backLeftMotor = hwMap.get(DcMotor.class, "LBDrive"); //motor 2
+        backRightMotor = hwMap.get(DcMotor.class, "RBDrive"); //motor 3
 
         //stop Encoders RR
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -22,7 +23,9 @@ public class CenterStageDrivetrain {
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //mecanum drive
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //Non encoder TeleOp
@@ -31,12 +34,11 @@ public class CenterStageDrivetrain {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        /*
+        //zero power (no coasting)
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        */
     }
 
     private void setPowers(double frontLeftPower, double frontRightPower,
@@ -89,5 +91,19 @@ public class CenterStageDrivetrain {
         frontRightMotor.setPower(frontRightPower);
         backLeftMotor.setPower(backLeftPower);
         backRightMotor.setPower(backRightPower);
+    }
+
+    public void motorsReverse() {
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+    }
+
+    public void motorsForward() {
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 }

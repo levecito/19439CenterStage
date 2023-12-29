@@ -15,13 +15,13 @@ public class CenterStageScoring {
 
 
     public void init(HardwareMap hwMap) {
-        intake = hwMap.get(DcMotor.class, "IntakeMotor");
-        slideLeft = hwMap.get(DcMotor.class, "SlideL");
-        slideRight = hwMap.get(DcMotor.class, "SlideR");
-        intakeContSpeed = hwMap.get(CRServo.class, "IntakeContSpeed");
-        transferServo = hwMap.get(Servo.class, "LinearTransfer");
-        pivotTransfer = hwMap.get(Servo.class, "TorquePivot");
-        droneLauncher = hwMap.get(Servo.class, "DroneLauncher");
+        intake = hwMap.get(DcMotor.class, "IntakeMotor"); //exp port 2
+        slideLeft = hwMap.get(DcMotor.class, "SlideL"); //exp port 0
+        slideRight = hwMap.get(DcMotor.class, "SlideR"); //exp port 1
+        intakeContSpeed = hwMap.get(CRServo.class, "IntakeContSpeed"); //servo 0
+        transferServo = hwMap.get(Servo.class, "LinearTransfer"); //servo 2
+        pivotTransfer = hwMap.get(Servo.class, "TorquePivot"); //servo 1
+        droneLauncher = hwMap.get(Servo.class, "DroneLauncher"); //servo 3
 
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
