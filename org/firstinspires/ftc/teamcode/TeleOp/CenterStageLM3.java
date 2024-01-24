@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.referenceAS.CenterStageDrivetrain;
-import org.firstinspires.ftc.teamcode.referenceAS.CenterStageScoring;
+import org.firstinspires.ftc.teamcode.mechanisms.CenterStageDrivetrain;
+import org.firstinspires.ftc.teamcode.mechanisms.CenterStageScoring;
 
 @TeleOp(name = "LM3 TeleOp")
 public class CenterStageLM3 extends OpMode {
@@ -15,6 +15,8 @@ public class CenterStageLM3 extends OpMode {
         boolean yAlreadyPressed;
         boolean intakeOn;
         boolean reverseIntake;
+        boolean inEndGame;
+        double endGameTime;
         int transferState;
 
         CenterStageDrivetrain drivetrain = new CenterStageDrivetrain();
@@ -23,6 +25,8 @@ public class CenterStageLM3 extends OpMode {
     public void init() {
         drivetrain.init(hardwareMap);
         scoring.init(hardwareMap);
+        inEndGame = false;
+        telemetry.addData("Lets go", " RoboGang!");
     }
 
     @Override
@@ -30,6 +34,8 @@ public class CenterStageLM3 extends OpMode {
         scoring.pivotServo(0.02);
         scoring.transferServo(1.0);
         scoring.droneLaunch(0.0);
+        endGameTime = getRuntime() + 90;
+        telemetry.addData("Lets go", " RoboGang!");
     }
 
     @Override
@@ -57,6 +63,7 @@ public class CenterStageLM3 extends OpMode {
             driveReversed = !driveReversed;
             if (driveReversed) {
                 drivetrain.motorsReverse();
+                telemetry.addData("Goofy ahh driving", " Engaged");
             } else {
                 drivetrain.motorsForward();
             }
@@ -95,8 +102,10 @@ public class CenterStageLM3 extends OpMode {
         boolean slidesSpeedNeg = gamepad2.dpad_down;
         if (slidesSpeedPos) {
             scoring.slideMovement(0.75);
+            telemetry.addData("Going", " Up!");
         } else if (slidesSpeedNeg) {
             scoring.slideMovement(-0.75);
+            telemetry.addData("Going", " Down!");
         } else {
             scoring.slideMovement(0.0);
         }
@@ -128,6 +137,15 @@ public class CenterStageLM3 extends OpMode {
         boolean drone = gamepad1.x;
         if (drone) {
             scoring.droneLaunch(0.2);
+            telemetry.addData("Droned Already", " Eh?");
+        }
+
+        if ((getRuntime() > endGameTime) && !inEndGame) {
+            inEndGame = true;
+        }
+
+        if (inEndGame) {
+            telemetry.addData("Hang yourself...", " NOW!!");
         }
     }
 }
