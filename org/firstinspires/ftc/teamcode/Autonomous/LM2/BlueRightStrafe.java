@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.Autonomous.LM2;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.referenceAS.CenterStageAuto;
-import org.firstinspires.ftc.teamcode.referenceAS.CenterStageScoring;
+import org.firstinspires.ftc.teamcode.mechanisms.CenterStageAuto;
+import org.firstinspires.ftc.teamcode.mechanisms.CenterStageScoring;
 
 @Autonomous()
 public class BlueRightStrafe extends OpMode {

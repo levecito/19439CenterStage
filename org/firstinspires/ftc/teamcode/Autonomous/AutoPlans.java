@@ -31,9 +31,9 @@ public class AutoPlans extends OpMode {
                 TEAM PROP - 20 + 20 + 5 + 5 + 5C = 50+5C
 
             CURRENT AUTO PLANS
-                PARK IN BACKDROP
+                PARK IN BACKDROP (DONE LM2)
                 POINTS: 5
-                DETECT SPIKE, NO PURPLE PIXEL
+                DETECT SPIKE, NO PURPLE PIXEL (DONE 1/2/24)
                 POINTS:
                 YELLOW PIXEL IN BACKDROP
                 POINTS: 10/20
@@ -43,4 +43,9 @@ public class AutoPlans extends OpMode {
                 - REDESIGN TRANSFER
                 - WORK ON APRILTAGS
                 - RE-TAPE FIELD
-            */
+
+                UPDATE 1/2/24
+                - CAN DETECT TEAM PROP
+                - OPENCV IS BROKEN
+
+*/
