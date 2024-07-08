@@ -18,6 +18,7 @@ public class CenterStageScoring {
     private Servo droneLauncher;
     public WebcamName webcamName;
     public ElapsedTime auto_timer = new ElapsedTime();
+    private Servo stackServo;
 
 
     public void init(HardwareMap hwMap) {
@@ -28,6 +29,7 @@ public class CenterStageScoring {
         transferServo = hwMap.get(Servo.class, "LinearTransfer"); //servo 2
         pivotTransfer = hwMap.get(Servo.class, "TorquePivot"); //servo 1
         droneLauncher = hwMap.get(Servo.class, "DroneLauncher"); //servo 3
+        stackServo = hwMap.get(Servo.class, "stack"); //exp 0
 
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -40,6 +42,7 @@ public class CenterStageScoring {
         intakeContSpeed.setDirection(CRServo.Direction.REVERSE);
         intake.setDirection(DcMotor.Direction.REVERSE);
         droneLauncher.setDirection(Servo.Direction.REVERSE);
+        stackServo.setDirection(Servo.Direction.REVERSE);
 
         slideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -81,6 +84,10 @@ public class CenterStageScoring {
         slideRight.setPower(speed);
     }
 
+    public void slideBreak() {
+
+    }
+
     public void slideEncoders(int pos) {
         slideRight.setTargetPosition(pos);
         slideLeft.setTargetPosition(pos);
@@ -119,4 +126,7 @@ public class CenterStageScoring {
         droneLauncher.setPosition(pos);
     }
 
+    public void stackServo(double pos) {
+        stackServo.setPosition(pos);
+    }
 }

@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechanisms.CenterStageDrivetrain;
 import org.firstinspires.ftc.teamcode.mechanisms.CenterStageScoring;
 
+@Disabled
 @TeleOp(name = "LT TeleOp")
 public class CenterStageLT extends OpMode {
         boolean aAlreadyPressed;
@@ -33,7 +35,7 @@ public class CenterStageLT extends OpMode {
     public void start() {
         scoring.pivotServo(0.02);
         scoring.transferServo(1.0);
-        scoring.droneLaunch(0.0);
+        scoring.droneLaunch(1.0);
         endGameTime = getRuntime() + 90;
     }
 
@@ -134,15 +136,21 @@ public class CenterStageLT extends OpMode {
 
         boolean drone = gamepad1.x;
         if (drone) {
-            scoring.droneLaunch(0.2);
+            scoring.droneLaunch(0.0);
         }
 
         if ((getRuntime() > endGameTime) && !inEndGame) {
             inEndGame = true;
+            gamepad1.rumbleBlips(3);
+            gamepad2.rumbleBlips(3);
         }
 
         if (inEndGame) {
             telemetry.addData("Hang yourself...", " NOW!!");
         }
+    }
+
+    public void stop() {
+        
     }
 }

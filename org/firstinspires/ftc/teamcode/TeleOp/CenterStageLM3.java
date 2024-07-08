@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechanisms.CenterStageDrivetrain;
 import org.firstinspires.ftc.teamcode.mechanisms.CenterStageScoring;
 
+@Disabled
 @TeleOp(name = "LM3 TeleOp")
 public class CenterStageLM3 extends OpMode {
         boolean aAlreadyPressed;

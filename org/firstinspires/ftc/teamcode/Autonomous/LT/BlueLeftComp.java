@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous.LT;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.processors.FirstVisionProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous(name = "A Concept Auto")
+@Disabled
 public class BlueLeftComp extends OpMode {
     private FirstVisionProcessor visionProcessor;
     private VisionPortal visionPortal;

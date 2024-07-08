@@ -1,29 +1,32 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechanisms.CenterStageDrivetrain;
 import org.firstinspires.ftc.teamcode.mechanisms.CenterStageScoring;
-@Disabled
-@TeleOp(name = "LM2 TeleOp")
-public class CenterStageLM2 extends OpMode {
+import org.firstinspires.ftc.teamcode.mechanisms.GyroDrivetrain;
+
+@TeleOp(name = "Outreach TeleOp")
+public class CenterStageOutreach extends OpMode {
         boolean aAlreadyPressed;
         boolean bAlreadyPressed;
         boolean yAlreadyPressed;
         boolean intakeOn;
         boolean reverseIntake;
-        int transferState;
         boolean inEndGame;
         double endGameTime;
+        int transferState;
 
         CenterStageDrivetrain drivetrain = new CenterStageDrivetrain();
         CenterStageScoring scoring = new CenterStageScoring();
+        GyroDrivetrain centricDrive = new GyroDrivetrain();
+
     @Override
     public void init() {
         drivetrain.init(hardwareMap);
         scoring.init(hardwareMap);
+        centricDrive.init(hardwareMap);
         inEndGame = false;
     }
 
@@ -31,7 +34,8 @@ public class CenterStageLM2 extends OpMode {
     public void start() {
         scoring.pivotServo(0.02);
         scoring.transferServo(1.0);
-        scoring.droneLaunch(0.0);
+        scoring.droneLaunch(0.23);
+        scoring.stackServo(0.0);
         endGameTime = getRuntime() + 90;
     }
 
@@ -39,16 +43,23 @@ public class CenterStageLM2 extends OpMode {
     public void loop() {
         //player 1
         //driving
-        float forward = -gamepad1.left_stick_y;
-        float right = gamepad1.left_stick_x;
-        float turn = gamepad1.right_stick_x;
-        double mult;
-        if (gamepad1.right_bumper) {
-            mult = 1;
-        } else {
-            mult = 0.5;
+        double forward = -gamepad1.left_stick_y;
+        double right = gamepad1.left_stick_x;
+        double turn = gamepad1.right_stick_x;
+
+        if (gamepad1.options) {
+            centricDrive.yawReset();
         }
-        drivetrain.drive(forward, right, turn, mult);
+
+        double botHeading = centricDrive.yawHeading();
+
+        double rotX = right * Math.cos(-botHeading) - forward * Math.sin(-botHeading);
+        double rotY = right * Math.sin(-botHeading) + forward * Math.cos(-botHeading);
+
+        double denim = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(turn), 1);
+
+        centricDrive.fieldCentricDrive(rotX, rotY, turn, denim);
+
         //player 2
         //intake
         if (gamepad2.a && !aAlreadyPressed) {
@@ -80,11 +91,11 @@ public class CenterStageLM2 extends OpMode {
         boolean slidesSpeedPos = gamepad2.dpad_up;
         boolean slidesSpeedNeg = gamepad2.dpad_down;
         if (slidesSpeedPos) {
-            scoring.slideMovement(0.75);
+            scoring.slideMovement(0.85);
         } else if (slidesSpeedNeg) {
-            scoring.slideMovement(-0.75);
+            scoring.slideMovement(-0.85);
         } else {
-            scoring.slideMovement(0.0);
+            scoring.slideMovement(0.01);
         }
 
         //linear transfers (switch)
@@ -103,7 +114,6 @@ public class CenterStageLM2 extends OpMode {
                 scoring.transferServo(0.3);
                 break;
         }
-        telemetry.addData("Y state", transferState % 2);
 
         //pivot servos
         if (gamepad2.right_bumper) {
@@ -112,15 +122,41 @@ public class CenterStageLM2 extends OpMode {
             scoring.pivotServo(0.02);
         }
 
-        if ((getRuntime() > endGameTime) && !inEndGame) {
-            gamepad1.rumbleBlips(3);
-            gamepad2.rumbleBlips(3);
-            inEndGame = true;
+        //trigger setup!
+        boolean triggerRightP2;
+        triggerRightP2 = gamepad1.right_trigger == 1.0;
+        boolean triggerLeftP2;
+        triggerLeftP2 = gamepad1.left_trigger == 1.0;
+
+        //stack servos
+        if (triggerRightP2) {
+            scoring.stackServo(0.4);
+        } else if (triggerLeftP2) {
+            scoring.stackServo(0.28);
+        } else if (gamepad1.right_stick_button) {
+            scoring.stackServo(0.0);
         }
 
+
+        //drone
         boolean drone = gamepad1.x;
         if (drone) {
-            scoring.droneLaunch(0.2);
+            scoring.droneLaunch(0.5);
         }
+
+        //endgame rumble
+        if ((getRuntime() > endGameTime) && !inEndGame) {
+            inEndGame = true;
+            gamepad1.rumbleBlips(3);
+            gamepad2.rumbleBlips(3);
+        }
+
+        if (inEndGame) {
+            telemetry.addData("Hang yourself...", " NOW!!");
+        }
+    }
+
+    public void stop() {
+        drivetrain.stopMotors();
     }
 }

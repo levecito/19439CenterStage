@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.mechanisms.CenterStageAuto;
 import org.firstinspires.ftc.teamcode.mechanisms.CenterStageScoring;
 
 @Autonomous()
+@Disabled
 public class SlideTesting extends OpMode {
     CenterStageScoring scoring = new CenterStageScoring();
     @Override

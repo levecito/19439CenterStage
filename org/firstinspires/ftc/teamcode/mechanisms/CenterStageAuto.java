@@ -19,7 +19,7 @@ public class CenterStageAuto {
         backLeftMotor = hwMap.get(DcMotor.class, "LBDrive");
         backRightMotor = hwMap.get(DcMotor.class, "RBDrive");
 
-        //reset encoders (prevent drift)
+        //reset encoders
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -36,6 +36,11 @@ public class CenterStageAuto {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -92,5 +97,10 @@ public class CenterStageAuto {
         frontRightMotor.setTargetPosition(frontRightPos);
         backLeftMotor.setTargetPosition(backLeftPos);
         backRightMotor.setTargetPosition(backRightPos);
+
+        while (frontLeftMotor.isBusy() || frontRightMotor.isBusy() || backLeftMotor.isBusy() || backRightMotor.isBusy()) {
+
+        }
+        stopMotors();
     }
 }
